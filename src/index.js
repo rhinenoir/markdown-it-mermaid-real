@@ -1,4 +1,4 @@
-const mermaid = require('mermaid')
+import mermaid from 'mermaid'
 
 const mermaidChart = (code) => {
   try {
