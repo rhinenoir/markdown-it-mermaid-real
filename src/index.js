@@ -1,4 +1,4 @@
-import mermaid from 'mermaid'
+const mermaid = require('mermaid')
 
 const mermaidChart = (code) => {
   try {
@@ -49,4 +49,4 @@ const MermaidPlugin = (md) => {
   }
 }
 
-export default MermaidPlugin
+module.exports = MermaidPlugin

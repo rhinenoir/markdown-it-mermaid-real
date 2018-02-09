@@ -1,9 +1,7 @@
-import assert from 'assert'
-import markdownIt from 'markdown-it'
-import markdownItLatex from '../dist/index'
+const assert = require('assert')
+const markdownIt =require('markdown-it')
 
 const mdi = markdownIt()
-mdi.use(markdownItLatex)
 
 assert(mdi.render('# Hello world').trim() === '<h1>Hello world</h1>', '# Hello world')
 assert(mdi.render('Hello world').trim() === '<p>Hello world</p>', 'Hello world')
