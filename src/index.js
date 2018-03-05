@@ -51,11 +51,11 @@ const config = {
 	gitGraph: {},
 	info: {}
 }
-const mermaidChart = (mermaidNode) => {
+const mermaidChart = (containerElt, elt) => {
 	const mermaidSvgId = `mermaid-svg-${uid()}`
-	const txt = mermaidNode.code
+	const txt = elt.textContent;
 	var parsedHtml = ''
-	mermaidNode.id = mermaidSvgId
+	containerElt.innerHTML = `<div class="mermaid"><svg xmlns="http://www.w3.org/2000/svg" id="${mermaidSvgId}"><g></g>${txt}</svg></div>`
 	try {
 		const graphType = mermaidUtils.detectType(txt)
 		switch (graphType) {
@@ -95,13 +95,18 @@ const mermaidChart = (mermaidNode) => {
 				info.draw(txt, mermaidSvgId, 'Unknown')
 				break
 
-			const parsedHtml = `<div class="mermaid"><svg xmlns="http://www.w3.org/2000/svg" id="${mermaidSvgId}"><g></g>${txt}</svg></div>`
+			parsedHtml = containerElt.firstChild.innerHTML
+			
 		}
 	} catch (e) {
-		parsedHtml = `<pre>${mermaidNode.code}</pre>`
+		parsedHtml = `<pre>${txt}</pre>`
 		console.error(e)
 	}
-	mermaidNode.content = parsedHtml
+	console.log(elt)
+	console.log(containerElt)
+	containerElt.parentNode.removeChild(containerElt)
+	elt.parentNode.removeChild(elt)
+	return parsedHtml
 }
 
 const MermaidPlugin = (md) => {
@@ -111,9 +116,17 @@ const MermaidPlugin = (md) => {
 		const token = tokens[idx]
 		const code = token.content.trim()
 		if (token.info === 'mermaid') {
-			var mermaidNode = {code:code, id:"", content:""}
-			mermaidChart(mermaidNode)
-			return mermaidNode.content
+			const containerElt = document.createElement('div')
+			containerElt.className = 'hidden-rendering-container'
+			document.body.appendChild(containerElt)
+
+			const elt = document.createElement('div')
+			elt.className = 'mermaid'
+			elt.innerText = code
+			document.body.appendChild(elt)
+
+			const result = mermaidChart(containerElt, elt)
+			return result
 		}
 		return temp(tokens, idx, options, env, slf)
 	}
